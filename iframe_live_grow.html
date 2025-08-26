@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>In-Image Ad</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+        background: transparent;
+        height: 100%;
+      }
+      body {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        font-family: Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Noto Sans KR', sans-serif;
+      }
+
+      /* 하단 바 */
+      .in-image-bg {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 63px;
+        background-color: #ffdbe2;
+        z-index: 1;
+        transform: translateY(100%);
+        transition: transform 0.6s ease, opacity 0.6s ease;
+        opacity: 0;
+      }
+      .in-image-bg.visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* 배너 본체 */
+      .in-image-ad {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        max-width: 100%;
+        height: 80px;
+        background-color: #fff5f7; /* JS에서 adBgType으로 덮어씀 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        z-index: 2;
+      }
+      .in-image-bg.visible ~ .in-image-ad {
+        opacity: 1;
+      }
+
+      .ad-content {
+        display: flex; /* 항상 가로 정렬 유지 */
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 600px;
+        padding: 0 24px;
+        gap: 20px;
+      }
+
+      .ad-logo {
+        width: 69px;
+        height: 52px;
+        flex-shrink: 0;
+        object-fit: contain;
+      }
+
+      .ad-middle {
+        display: flex; /* 데스크탑: 가로 */
+        align-items: center;
+        gap: 12px;
+        flex-grow: 1;
+        min-width: 0;
+      }
+      .ad-middle.vertical-layout {
+        /* 모바일에서만 적용 */
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .ad-text {
+        margin: auto;
+        font-weight: 700;
+        font-size: 20px;
+        color: #000000;
+        white-space: nowrap;
+      }
+      .ad-text-hover {
+        margin: auto;
+        display: none;
+        color: #000000;
+        text-align: center;
+      }
+      .ad-line1 {
+        font-size: 13px;
+        font-weight: 400;
+        color: #000000;
+        text-align: center;
+      }
+      .ad-line2 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #000000;
+        text-align: center;
+      }
+
+      .ad-products {
+        display: flex;
+        align-items: center;
+      }
+      .product-image-wrapper {
+        width: 72px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        overflow: hidden;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+      }
+      .product-image {
+        width: 127px;
+        height: 73px;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+        transform-origin: center bottom;
+      }
+
+      /* hover */
+      .in-image-ad:hover .product-image-wrapper {
+        overflow: visible;
+      }
+      .in-image-ad:hover .product-image {
+        transform: scale(1.3);
+        z-index: 20;
+      }
+      .in-image-ad:hover .ad-text {
+        display: none;
+      }
+      .in-image-ad:hover .ad-text-hover {
+        display: block;
+      }
+
+      .ad-cta {
+        background-color: #f37482;
+        color: #fff;
+        width: 60px;
+        height: 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        border: none;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .ad-cta:hover {
+        background-color: #f37482;
+      }
+
+      .gentle-shake {
+        animation: gentle-shake 0.5s ease;
+        transform-origin: center center;
+      }
+      @keyframes gentle-shake {
+        0% {
+          transform: rotate(0deg);
+        }
+        20% {
+          transform: rotate(-5deg);
+        }
+        40% {
+          transform: rotate(5deg);
+        }
+        60% {
+          transform: rotate(-5deg);
+        }
+        80% {
+          transform: rotate(5deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+
+      /* 모바일: 중앙 영역(ad-middle)만 세로 스택 */
+      @media (max-width: 600px) {
+        .in-image-ad {
+          height: 80px; /* 고정 높이 유지(원하면 auto로 바꿔도 됨) */
+          width: 300px;
+        }
+        /* ad-content는 그대로 가로 유지 (중요!) */
+        .ad-middle {
+          width: 100%;
+        }
+        .ad-middle.vertical-layout {
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+        }
+        .ad-text {
+          display: none !important;
+        }
+        .ad-text-hover {
+          display: block !important;
+        }
+        .ad-cta {
+          margin-top: 4px;
+        } /* ad-middle 안으로 들어가면 아래 여백 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="in-image-bg" id="bg"></div>
+    <div class="in-image-ad" id="ad">
+      <div class="ad-content" id="adContent">
+        <img class="ad-logo" id="logo" alt="브랜드 로고" />
+
+        <!-- 가운데(텍스트 영역) -->
+        <div class="ad-middle" id="adMiddle">
+          <div class="ad-text" id="brandText">브랜드</div>
+          <div class="ad-text-hover">
+            <div class="ad-line1" id="line1">브랜드</div>
+            <div class="ad-line2" id="line2">혜택 문구</div>
+          </div>
+        </div>
+
+        <!-- 상품 이미지 -->
+        <div class="ad-products">
+          <span class="product-image-wrapper" id="prodWrap">
+            <img class="product-image" id="product" alt="제품 이미지" />
+          </span>
+        </div>
+
+        <!-- CTA 버튼: 데스크탑은 상품 오른쪽에 위치 -->
+        <button class="ad-cta" id="ctaBtn">구매하기</button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const qs = new URLSearchParams(location.search);
+
+        // ===== 파라미터(기본값 포함) =====
+        const data = {
+          logo: qs.get('logo') || './logo.png',
+          product: qs.get('product') || './image.png',
+
+          brand: qs.get('brand') || '{NAME}',
+          line1: qs.get('line1') || '{TEXT1}',
+          line2: qs.get('line2') || '{TEXT2}',
+          nameClolor: qs.get('nameClolor') || '{NAME_COLOR}',
+          lineClolor1: qs.get('lineClolor1') || '{TEXT_COLOR1}',
+          lineClolor2: qs.get('lineClolor2') || '{TEXT_COLOR2}',
+          ctaText: qs.get('ctaText') || '구매하기',
+
+          cta: qs.get('cta') || '#', // 버튼 전용 이동
+          click: qs.get('click') || '', // 배너 전체 클릭
+          bg: qs.get('bg') || '{BACKGROUND_COLOR}',
+          shake: qs.get('shake') !== '0',
+          autohide: parseInt(qs.get('autohide') || '0', 10) || 0,
+          imp: qs.get('imp') || '',
+
+          logoW: qs.get('logoW') || '',
+          logoH: qs.get('logoH') || '',
+          logoFit: qs.get('logoFit') || '',
+          productW: qs.get('productW') || '',
+          productH: qs.get('productH') || '',
+          productFit: qs.get('productFit') || '',
+
+          adBgType: (qs.get('adBgType') || '').toLowerCase(), // '', 'solid', 'gradient'
+          adBgSolid: qs.get('adBgSolid') || '{AD_COLOR}',
+          adBgStart: qs.get('adBgStart') || '#3a3a3a',
+          adBgEnd: qs.get('adBgEnd') || '#1f1f1f',
+        };
+
+        // ===== 요소 =====
+        const barBg = document.getElementById('bg');
+        const ad = document.getElementById('ad');
+        const adContent = document.getElementById('adContent');
+        const logo = document.getElementById('logo');
+        const product = document.getElementById('product');
+        const prodWrap = document.getElementById('prodWrap');
+        const brandTx = document.getElementById('brandText');
+        const line1Tx = document.getElementById('line1');
+        const line2Tx = document.getElementById('line2');
+        const ctaBtn = document.getElementById('ctaBtn');
+        const adMiddle = document.getElementById('adMiddle');
+
+        // 색상 반영
+        barBg.style.backgroundColor = data.bg;
+        brandTx.style.color = data.nameClolor;
+        line1Tx.style.color = data.lineClolor1;
+        line2Tx.style.color = data.lineClolor2;
+
+        // 배경 스타일
+        (function applyAdBackground() {
+          if (data.adBgType === 'solid') {
+            ad.style.background = data.adBgSolid;
+          } else if (data.adBgType === 'gradient') {
+            ad.style.background = `linear-gradient(to right, ${data.adBgStart} 0%, ${data.adBgStart} 10%, ${data.adBgEnd} 100%)`;
+          } else {
+            // 기본 CSS 유지
+          }
+        })();
+
+        // 콘텐츠 주입
+        logo.src = data.logo;
+        product.src = data.product;
+        brandTx.textContent = data.brand;
+        line1Tx.textContent = data.line1;
+        line2Tx.textContent = data.line2;
+        ctaBtn.textContent = data.ctaText;
+
+        // 크기/맞춤 적용
+        function applyDim(el, w, h, fit) {
+          if (!el) return;
+          if (w) el.style.width = w;
+          if (h) el.style.height = h;
+          if (fit) el.style.objectFit = fit;
+        }
+        applyDim(logo, data.logoW, data.logoH, data.logoFit);
+        if (data.productW) prodWrap.style.width = data.productW;
+        if (data.productH) prodWrap.style.height = data.productH;
+        applyDim(product, data.productW, data.productH, data.productFit);
+
+        // ===== 뷰포트에 따라 CTA를 ad-middle로 이동(모바일) 또는 복귀(데스크탑) =====
+        function placeCtaByViewport() {
+          const isMobile = window.innerWidth < 600;
+          if (isMobile) {
+            // 중앙 영역만 세로가 되도록 클래스 부여 & 버튼 삽입
+            adMiddle.classList.add('vertical-layout');
+            if (ctaBtn.parentElement !== adMiddle) {
+              adMiddle.appendChild(ctaBtn);
+            }
+          } else {
+            // 데스크탑: 중앙 영역 가로, 버튼은 상품 오른쪽(원래 자리)
+            adMiddle.classList.remove('vertical-layout');
+            if (ctaBtn.parentElement !== adContent) {
+              adContent.appendChild(ctaBtn);
+            }
+          }
+        }
+
+        window.addEventListener('load', () => {
+          barBg.classList.add('visible');
+
+          // 초기 위치 세팅
+          placeCtaByViewport();
+
+          // 자동 숨김
+          if (data.autohide > 0) {
+            setTimeout(() => {
+              ad.style.display = 'none';
+              barBg.style.display = 'none';
+            }, data.autohide * 1000);
+          }
+
+          // 배너 전체 클릭
+          if (data.click) {
+            ad.addEventListener('click', () => {
+              window.open(data.click, '_blank', 'noopener');
+            });
+          }
+
+          // CTA 버튼 클릭 (배너 클릭과 중복 방지)
+          ctaBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (data.cta && data.cta !== '#') {
+              window.open(data.cta, '_blank', 'noopener');
+            } else {
+              alert('광고 클릭! 광고주 웹사이트로 이동합니다.');
+            }
+          });
+
+          // 노출 트래킹
+          if (data.imp) {
+            const t = new Image();
+            t.src = data.imp;
+          }
+
+          // 버튼 부드러운 흔들림
+          let shakeInterval = null;
+          const startShake = () => {
+            if (!data.shake || shakeInterval) return;
+            shakeInterval = setInterval(() => {
+              ctaBtn.classList.add('gentle-shake');
+              setTimeout(() => ctaBtn.classList.remove('gentle-shake'), 1000);
+            }, 2000);
+          };
+          const stopShake = () => {
+            if (shakeInterval) {
+              clearInterval(shakeInterval);
+              shakeInterval = null;
+              ctaBtn.classList.remove('gentle-shake');
+            }
+          };
+          startShake();
+          ctaBtn.addEventListener('mouseenter', stopShake);
+          ctaBtn.addEventListener('mouseleave', startShake);
+
+          // 리사이즈 대응
+          window.addEventListener('resize', placeCtaByViewport);
+        });
+      })();
+    </script>
+  </body>
+</html>
