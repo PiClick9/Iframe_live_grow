@@ -104,14 +104,14 @@
         text-align: center;
       }
       .ad-line1 {
-        font-size: 13px;
+        font-size: 10px;
         font-weight: 400;
         color: #000000;
         text-align: center;
       }
       .ad-line2 {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 14px;
+        font-weight: 800;
         color: #000000;
         text-align: center;
       }
@@ -196,6 +196,9 @@
 
       /* 모바일: 중앙 영역(ad-middle)만 세로 스택 */
       @media (max-width: 600px) {
+        .ad-content {
+          gap: 0;
+        }
         .in-image-ad {
           height: 80px; /* 고정 높이 유지(원하면 auto로 바꿔도 됨) */
           width: 300px;
@@ -207,7 +210,6 @@
         .ad-middle.vertical-layout {
           flex-direction: column;
           align-items: center;
-          gap: 6px;
         }
         .ad-text {
           display: none !important;
