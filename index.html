@@ -104,20 +104,21 @@
         text-align: center;
       }
       .ad-line1 {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 400;
         color: #000000;
         text-align: center;
       }
       .ad-line2 {
-        font-size: 14px;
-        font-weight: 800;
+        font-size: 17px;
+        font-weight: 700;
         color: #000000;
         text-align: center;
       }
 
       .ad-products {
         display: flex;
+        height: 100%;
         align-items: center;
       }
       .product-image-wrapper {
@@ -198,10 +199,12 @@
       @media (max-width: 600px) {
         .ad-content {
           gap: 0;
+          height: 100%;
+          padding: 0;
         }
         .in-image-ad {
           height: 80px; /* 고정 높이 유지(원하면 auto로 바꿔도 됨) */
-          width: 300px;
+          width: 330px;
         }
         /* ad-content는 그대로 가로 유지 (중요!) */
         .ad-middle {
@@ -210,6 +213,7 @@
         .ad-middle.vertical-layout {
           flex-direction: column;
           align-items: center;
+          gap: 3px;
         }
         .ad-text {
           display: none !important;
@@ -218,7 +222,9 @@
           display: block !important;
         }
         .ad-cta {
-          margin-top: 4px;
+          height: 18px;
+          width: 60px;
+          font-size: 8px;
         } /* ad-middle 안으로 들어가면 아래 여백 */
       }
     </style>
