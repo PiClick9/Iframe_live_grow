@@ -58,7 +58,9 @@
       .in-image-bg.visible ~ .in-image-ad {
         opacity: 1;
       }
-
+      .pixel {
+        display: none;
+      }
       .ad-content {
         display: flex; /* 항상 가로 정렬 유지 */
         align-items: center;
@@ -233,6 +235,7 @@
     <div class="in-image-bg" id="bg"></div>
     <div class="in-image-ad" id="ad">
       <div class="ad-content" id="adContent">
+        <img class="pixel" id="pixel" />
         <img class="ad-logo" id="logo" alt="브랜드 로고" />
 
         <!-- 가운데(텍스트 영역) -->
@@ -264,6 +267,7 @@
         const data = {
           logo: qs.get('logo') || './logo.png',
           product: qs.get('product') || './image.png',
+          pixel: qs.get('product') || '{PIXEL_TRACKER}',
 
           brand: qs.get('brand') || '{NAME}',
           line1: qs.get('line1') || '{TEXT1}',
@@ -273,8 +277,8 @@
           lineClolor2: qs.get('lineClolor2') || '{TEXT_COLOR2}',
           ctaText: qs.get('ctaText') || '구매하기',
 
-          cta: qs.get('cta') || '#', // 버튼 전용 이동
-          click: qs.get('click') || '', // 배너 전체 클릭
+          cta: qs.get('cta') || '{CLICK_URL}', // 버튼 전용 이동
+          click: qs.get('click') || '{CLICK_URL}', // 배너 전체 클릭
           bg: qs.get('bg') || '{BACKGROUND_COLOR}',
           shake: qs.get('shake') !== '0',
           autohide: parseInt(qs.get('autohide') || '0', 10) || 0,
@@ -298,6 +302,7 @@
         const ad = document.getElementById('ad');
         const adContent = document.getElementById('adContent');
         const logo = document.getElementById('logo');
+        const pixel = document.getElementById('pixel');
         const product = document.getElementById('product');
         const prodWrap = document.getElementById('prodWrap');
         const brandTx = document.getElementById('brandText');
@@ -325,6 +330,7 @@
 
         // 콘텐츠 주입
         logo.src = data.logo;
+        pixel.src = data.pixel;
         product.src = data.product;
         brandTx.textContent = data.brand;
         line1Tx.textContent = data.line1;
