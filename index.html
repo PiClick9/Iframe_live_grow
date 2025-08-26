@@ -172,6 +172,20 @@
       .ad-cta:hover {
         background-color: #f37482;
       }
+      #close{
+        position:absolute;
+        top:0;
+        right:0;
+        background:none;
+        border:none;
+        padding:0;
+        cursor:pointer;
+      }
+      #aisum{
+        position: absolute;
+        top:3px;
+        right:5px;
+      }
 
       .gentle-shake {
         animation: gentle-shake 0.5s ease;
@@ -232,8 +246,16 @@
     </style>
   </head>
   <body>
-    <div class="in-image-bg" id="bg"></div>
+    <div class="in-image-bg" id="bg">
+      <button id="close">
+        <img src="./close.png" alt="close"/>
+      </button>
+      </a>
+    </div>
     <div class="in-image-ad" id="ad">
+      <a id="aisum" href="https://aedi.ai/" target="_blank">
+        <img src="./aisum.png" alt="aisum"/>
+      </a>
       <div class="ad-content" id="adContent">
         <img class="pixel" id="pixel" />
         <img class="ad-logo" id="logo" alt="브랜드 로고" />
@@ -261,6 +283,11 @@
 
     <script>
       (function () {
+        document.querySelector('#close').addEventListener('click',function(){
+          document.querySelector('.in-image-bg').remove();
+          document.querySelector('.in-image-ad').remove();
+        })
+
         const qs = new URLSearchParams(location.search);
 
         // ===== 파라미터(기본값 포함) =====
