@@ -203,7 +203,7 @@
         .ad-content {
           gap: 0;
           height: 100%;
-          padding: 0;
+          padding: 0 8px;
         }
         .in-image-ad {
           height: 80px; /* 고정 높이 유지(원하면 auto로 바꿔도 됨) */
@@ -265,8 +265,9 @@
 
         // ===== 파라미터(기본값 포함) =====
         const data = {
-          logo: qs.get('logo') || './logo.png',
-          product: qs.get('product') || './image.png',
+          // 이미지
+          logo: qs.get('logo') || '{IMAGE_LOGO}',
+          product: qs.get('product') || '{IMAGE1}',
           pixel: qs.get('product') || '{PIXEL_TRACKER}',
 
           brand: qs.get('brand') || '{NAME}',
