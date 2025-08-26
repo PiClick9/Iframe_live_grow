@@ -277,8 +277,8 @@
           lineClolor1: qs.get('lineClolor1') || '{TEXT_COLOR1}',
           lineClolor2: qs.get('lineClolor2') || '{TEXT_COLOR2}',
           ctaText: qs.get('ctaText') || '구매하기',
-          ctaBg: qs.get('ctaText') || '{CTA_BG}',
-          ctaColor: qs.get('ctaText') || '{CTA_COLOR}',
+          ctaBg: qs.get('ctaBg') || '{CTA_BG}',
+          ctaColor: qs.get('ctaColor') || '{CTA_COLOR}',
 
           cta: qs.get('cta') || '{CLICK_URL}', // 버튼 전용 이동
           click: qs.get('click') || '{CLICK_URL}', // 배너 전체 클릭
@@ -321,6 +321,7 @@
         line2Tx.style.color = data.lineClolor2;
         ctaBtn.style.backgroundColor = data.ctaBg;
         ctaBtn.style.color = data.ctaColor;
+        ad.style.background = data.adBgSolid;
 
         // 배경 스타일
         (function applyAdBackground() {
