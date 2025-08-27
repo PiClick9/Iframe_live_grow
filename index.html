@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang='ko'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no' />
     <title>In-Image Ad</title>
     <style>
       html,
@@ -172,19 +172,19 @@
       .ad-cta:hover {
         background-color: #f37482;
       }
-      #close{
-        position:absolute;
-        top:0;
-        right:0;
-        background:none;
-        border:none;
-        padding:0;
-        cursor:pointer;
-      }
-      #aisum{
+      #close {
         position: absolute;
-        top:3px;
-        right:5px;
+        top: 0;
+        right: 0;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+      #aisum {
+        position: absolute;
+        top: 3px;
+        right: 5px;
       }
 
       .gentle-shake {
@@ -246,47 +246,48 @@
     </style>
   </head>
   <body>
-    <div class="in-image-bg" id="bg">
-      <button id="close">
-        <img src="./close.png" alt="close"/>
+    <div class='in-image-bg' id='bg'>
+      <button id='close'>
+        <img src='https://static.piclick.kr/images/logos/close.png' alt='close' />
       </button>
-      </a>
     </div>
-    <div class="in-image-ad" id="ad">
-      <a id="aisum" href="https://aedi.ai/" target="_blank">
-        <img src="./aisum.png" alt="aisum"/>
+    <div class='in-image-ad' id='ad'>
+      <a id='aisum' href='https://aedi.ai/' target='_blank'>
+        <img src='https://static.piclick.kr/images/logos/aisum.png' alt='aisum' />
       </a>
-      <div class="ad-content" id="adContent">
-        <img class="pixel" id="pixel" />
-        <img class="ad-logo" id="logo" alt="브랜드 로고" />
+      <div class='ad-content' id='adContent'>
+        <img class='pixel' id='pixel' />
+        <img class='ad-logo' id='logo' alt='브랜드 로고' />
 
         <!-- 가운데(텍스트 영역) -->
-        <div class="ad-middle" id="adMiddle">
-          <div class="ad-text" id="brandText">브랜드</div>
-          <div class="ad-text-hover">
-            <div class="ad-line1" id="line1">브랜드</div>
-            <div class="ad-line2" id="line2">혜택 문구</div>
+        <div class='ad-middle' id='adMiddle'>
+          <div class='ad-text' id='brandText'>브랜드</div>
+          <div class='ad-text-hover'>
+            <div class='ad-line1' id='line1'>브랜드</div>
+            <div class='ad-line2' id='line2'>혜택 문구</div>
           </div>
         </div>
 
         <!-- 상품 이미지 -->
-        <div class="ad-products">
-          <span class="product-image-wrapper" id="prodWrap">
-            <img class="product-image" id="product" alt="제품 이미지" />
+        <div class='ad-products'>
+          <span class='product-image-wrapper' id='prodWrap'>
+            <img class='product-image' id='product' alt='제품 이미지' />
           </span>
         </div>
 
         <!-- CTA 버튼: 데스크탑은 상품 오른쪽에 위치 -->
-        <button class="ad-cta" id="ctaBtn">구매하기</button>
+        <button class='ad-cta' id='ctaBtn'>구매하기</button>
       </div>
     </div>
 
     <script>
       (function () {
-        document.querySelector('#close').addEventListener('click',function(){
+        const isValidUrl = (u) => /^https?:\/\//.test(u) && !/\{.+\}/.test(u);
+
+        document.querySelector('#close').addEventListener('click', function () {
           document.querySelector('.in-image-bg').remove();
           document.querySelector('.in-image-ad').remove();
-        })
+        });
 
         const qs = new URLSearchParams(location.search);
 
@@ -330,6 +331,7 @@
         // ===== 요소 =====
         const barBg = document.getElementById('bg');
         const ad = document.getElementById('ad');
+        const brandLink = document.getElementById('aisum');
         const adContent = document.getElementById('adContent');
         const logo = document.getElementById('logo');
         const pixel = document.getElementById('pixel');
@@ -399,7 +401,12 @@
             }
           }
         }
-
+        // 로고 링크 클릭 시 배너 전체 클릭 전파 방지
+        if (brandLink) {
+          brandLink.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+        }
         window.addEventListener('load', () => {
           barBg.classList.add('visible');
 
@@ -414,17 +421,19 @@
             }, data.autohide * 1000);
           }
 
-          // 배너 전체 클릭
-          if (data.click) {
-            ad.addEventListener('click', () => {
+          // 배너 전체 클릭 (유효한 URL일 때만, 링크/버튼 클릭은 무시)
+          ad.addEventListener('click', (e) => {
+            // 로고 링크나 CTA 버튼 내부 클릭이면 배너 클릭 무시
+            if (e.target.closest('#aisum') || e.target.closest('#ctaBtn')) return;
+            if (isValidUrl(data.click)) {
               window.open(data.click, '_blank', 'noopener');
-            });
-          }
+            }
+          });
 
           // CTA 버튼 클릭 (배너 클릭과 중복 방지)
           ctaBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (data.cta && data.cta !== '#') {
+            if (isValidUrl(data.cta)) {
               window.open(data.cta, '_blank', 'noopener');
             } else {
               alert('광고 클릭! 광고주 웹사이트로 이동합니다.');
