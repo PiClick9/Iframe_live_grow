@@ -180,6 +180,12 @@
         border: none;
         padding: 0;
         cursor: pointer;
+        width: 14px;
+        height: 14px;
+        img {
+          width: 100%;
+          height: 100%;
+        }
       }
       #aisum {
         position: absolute;
@@ -243,11 +249,11 @@
           font-size: 8px;
         } /* ad-middle 안으로 들어가면 아래 여백 */
         .product-image-wrapper {
-          overflow: visible;   /* 확대될 때 클리핑 방지 */
+          overflow: visible; /* 확대될 때 클리핑 방지 */
         }
         .product-image {
-          transform: scale(1.3);  /* 항상 1.3배 */
-          z-index: 20;            /* 다른 요소 위에 보이게 */
+          transform: scale(1.3); /* 항상 1.3배 */
+          z-index: 20; /* 다른 요소 위에 보이게 */
         }
       }
     </style>
